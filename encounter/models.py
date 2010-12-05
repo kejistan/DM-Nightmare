@@ -13,16 +13,20 @@ class CreatureClass(models.Model):
     minimum_will = models.IntegerField(blank=True)
     maximum_will = models.IntegerField(blank=True)
 
+    def new_instance(self, encounter):
+        return encounter.new_creature(self.pk)
+
 class CreatureInstance(models.Model):
     class = models.ForeignKey(CreatureClass, related_name='instances')
+    encounter = models.ForeignKey(Encounter, related_name='creatures')
+    instance_id = models.IntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)
     
     def new_action(self, action):
-        self.actions.create(dict(action, action_id=self.next_action_id()))
-
-    def next_action_id(self):
-        return self.actions.action_id_max + 1
+        return self.actions.create(action)
 
 class Action(models.Model):
+    target = models.ForeignKey(CreatureInstance, related_name='actions')
     attack_roll = models.IntegerField()
     hit_status = models.BooleanField()
     attack_vs = models.IntegerField(choices=(
@@ -37,5 +41,10 @@ class Action(models.Model):
             (1, 'became bloodied'),
             (2, 'became dead'))
     )
-    target = models.ForeignKey(CreatureInstance, related_name='actions')
-    action_id = models.IntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+class Encounter(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def new_creature(self, creature_class):
+        return self.creatures.create(class=creature_class)
