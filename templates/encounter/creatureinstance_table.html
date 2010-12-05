@@ -1,0 +1,26 @@
+<table>
+  <tr class="head">
+	<th>pk</th>
+	<th>encounter_label</th>
+	<th>name</th>
+	<th>hp</th>
+	<th>ac</th>
+	<th>fort</th>
+	<th>ref</th>
+	<th>will</th>
+	<th>created_at</th>
+  </tr>
+  {% for object in object_list %}
+  <tr>
+	<td>{{ object.pk }}</td>
+	<td>{{ object.encounter_label }}</td>
+	<td>{{ object.creature_class.name }}</td>
+	<td>{{ object.creature_class.hp }}</td>
+	<td>{{ object.creature_class.ac }}</td>
+	<td>{{ object.creature_class.fort }}</td>
+	<td>{{ object.creature_class.ref }}</td>
+	<td>{{ object.creature_class.will }}</td>
+	<td>{{ object.created_at }}</td>
+  </tr>
+  {% endfor %}
+</table>

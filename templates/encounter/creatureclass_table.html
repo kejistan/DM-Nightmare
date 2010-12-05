@@ -1,0 +1,26 @@
+<table>
+  <tr class="head">
+	<th>pk</th>
+	<th>name</th>
+	<th>hp</th>
+	<th>ac</th>
+	<th>fort</th>
+	<th>ref</th>
+	<th>will</th>
+	<th>created_at</th>
+	<th>updated_at</th>
+  </tr>
+  {% for object in object_list %}
+  <tr>
+	<td>{{ object.pk }}</td>
+	<td>{{ object.name }}</td>
+	<td>{{ object.hp }}</td>
+	<td>{{ object.ac }}</td>
+	<td>{{ object.fort }}</td>
+	<td>{{ object.ref }}</td>
+	<td>{{ object.will }}</td>
+	<td>{{ object.created_at }}</td>
+	<td>{{ object.updated_at }}</td>
+  </tr>
+  {% endfor %}
+</table>

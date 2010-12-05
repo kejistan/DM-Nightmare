@@ -1,0 +1,13 @@
+{% extends 'main.html' %}
+
+{% block title %}Creature Classes{% endblock %}
+
+{% block body %}
+{% if object_list %}
+{% include 'encounter/creatureclass_table.html' %}
+{% else %}
+<div>
+  There are no Creature Classes.
+</div>
+{% endif %}
+{% endblock %}
