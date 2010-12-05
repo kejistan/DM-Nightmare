@@ -1,5 +1,11 @@
 from django.db import models
 
+class Encounter(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def new_creature(self, _class):
+        return self.creatures.create(creature_class=_class)
+
 class CreatureClass(models.Model):
     name = models.CharField(max_length=50)
     minimum_hp = models.IntegerField(blank=True)
@@ -17,7 +23,7 @@ class CreatureClass(models.Model):
         return encounter.new_creature(self.pk)
 
 class CreatureInstance(models.Model):
-    class = models.ForeignKey(CreatureClass, related_name='instances')
+    creature_class = models.ForeignKey(CreatureClass, related_name='instances')
     encounter = models.ForeignKey(Encounter, related_name='creatures')
     instance_id = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
@@ -42,9 +48,3 @@ class Action(models.Model):
             (2, 'became dead'))
     )
     created_at = models.DateTimeField(auto_now_add=True)
-
-class Encounter(models.Model):
-    created_at = models.DateTimeField(auto_now_add=True)
-    
-    def new_creature(self, creature_class):
-        return self.creatures.create(class=creature_class)
