@@ -20,3 +20,12 @@ def encounter_action_create(request, encounter_id, *args, **kwargs):
                                        model=Action,
                                        post_save_redirect=redirect_to,
                                        *args, **kwargs)
+
+def creature_instance_action_create(request, creatureinstance_id, *args,
+                                    **kwargs):
+    creatureinstance = get_object_or_404(CreatureInstance,
+                                         pk=creatureinstance_id)
+    redirect_to = creatureinstance.get_absolute_url()
+    return create_update.create_object(request, model=Action,
+                                       post_save_redirect=redirect_to,
+                                       *args, **kwargs)

@@ -13,6 +13,9 @@ actions = { 'queryset' : Action.objects.all() }
 urlpatterns = patterns('',
     # Example:
     # (r'^dm_nightmare/', include('dm_nightmare.foo.urls')),
+    (r'^creatures/(?P<creatureinstance_id>\d+)/action/add',
+     'encounter.views.creature_instance_action_create', {},
+     'creature_instance_action_create'),
     (r'^creatures/(?P<object_id>\d+)', list_detail.object_detail,
      creature_instances, 'creature_instance_detail'),
     (r'^creatures/classes/(?P<object_id>\d+)', list_detail.object_detail,

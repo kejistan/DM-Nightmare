@@ -172,6 +172,11 @@ class CreatureInstance(models.Model):
     def __unicode__(self):
         return self.name()
 
+    @models.permalink
+    def get_absolute_url(self):
+        return ('creature_instance_detail', (),
+                { 'object_id' : self.pk })
+
     class Meta:
         unique_together = ('encounter', 'encounter_label', 'creature_class')
         order_with_respect_to = 'encounter'

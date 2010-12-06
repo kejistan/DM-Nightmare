@@ -22,6 +22,7 @@
 	<td>{{ object.creature_class.ref }}</td>
 	<td>{{ object.creature_class.will }}</td>
 	<td>{{ object.created_at }}</td>
+	<td><a href="{% url creature_instance_action_create object.pk %}">Add Action</a></td>
   </tr>
   {% endfor %}
 </table>
