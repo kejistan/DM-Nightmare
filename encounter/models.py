@@ -1,5 +1,11 @@
 from django.db import models
 
+def _range(min, max):
+    if (min == max):
+        return str(max)
+    else:
+        return '[%d,%d]' % (min, max)
+
 class Encounter(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     
@@ -8,24 +14,19 @@ class Encounter(models.Model):
 
 class CreatureClass(models.Model):
     name = models.CharField(max_length=50)
-    minimum_hp = models.IntegerField(blank=True)
-    maximum_hp = models.IntegerField(blank=True)
-    minimum_ac = models.IntegerField(blank=True)
-    maximum_ac = models.IntegerField(blank=True)
-    minimum_fort = models.IntegerField(blank=True)
-    maximum_fort = models.IntegerField(blank=True)
-    minimum_ref = models.IntegerField(blank=True)
-    maximum_ref = models.IntegerField(blank=True)
-    minimum_will = models.IntegerField(blank=True)
-    maximum_will = models.IntegerField(blank=True)
+    minimum_hp = models.IntegerField(blank=True, null=True)
+    maximum_hp = models.IntegerField(blank=True, null=True)
+    minimum_ac = models.IntegerField(blank=True, null=True)
+    maximum_ac = models.IntegerField(blank=True, null=True)
+    minimum_fort = models.IntegerField(blank=True, null=True)
+    maximum_fort = models.IntegerField(blank=True, null=True)
+    minimum_ref = models.IntegerField(blank=True, null=True)
+    maximum_ref = models.IntegerField(blank=True, null=True)
+    minimum_will = models.IntegerField(blank=True, null=True)
+    maximum_will = models.IntegerField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
-    def _range(min, max):
-        if (min == max):
-            return str(max)
-        else:
-            return '[%d,%d]' % (min, max)
+    encounters = models.ManyToManyField(Encounter, through='CreatureInstance', related_name='creature_classes')
 
     def hp(self):
         return _range(self.minimum_hp, self.maximum_hp)
@@ -53,6 +54,12 @@ class CreatureInstance(models.Model):
     
     def new_action(self, action):
         return self.actions.create(action)
+
+    def name(self):
+        if self.encounter_label:
+            return '%s - %s' % (self.encounter_label, self.creature_class.name)
+        else:
+            return self.creature_class.name
 
     def clean_encounter_label(self):
         label = self.cleaned_data['encounter_label']

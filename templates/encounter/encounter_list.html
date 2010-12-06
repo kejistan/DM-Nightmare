@@ -3,11 +3,5 @@
 {% block title %}Encounters{% endblock %}
 
 {% block body %}
-{% if object_list %}
 {% include 'encounter/encounter_table.html' %}
-{% else %}
-<div>
-  There are no Encounters.
-</div>
-{% endif %}
 {% endblock %}

@@ -5,14 +5,13 @@
 {% block body %}
 <h1>Encounter {{ object.pk }} on {{ object.created_at }}</h1>
 
-<h2>{{ object.creatures.count }} Creatures in this encounter</h2>
-{% if object.creatures %}
-{% with object.creatures.all as objects %}
+<h2>Creatures Involved</h2>
+{% with object.creatures.all as object_list %}
 {% include 'encounter/creatureinstance_table.html' %}
 {% endwith %}
-{% else %}
-<div>
-  There are no creatures in this encounter.
-</div>
-{% endif %}
+
+<h2>Actions Taken</h2>
+{% with object.actions.all as object_list %}
+{% include 'encounter/action_table.html' %}
+{% endwith %}
 {% endblock %}

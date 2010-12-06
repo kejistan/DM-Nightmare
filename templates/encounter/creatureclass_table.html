@@ -1,4 +1,5 @@
-<table>
+{% if object_list %}
+<table class="object_list">
   <tr class="head">
 	<th>pk</th>
 	<th>name</th>
@@ -24,3 +25,8 @@
   </tr>
   {% endfor %}
 </table>
+{% else %}
+<div class="object_list">
+  There are no Creature Classes.
+</div>
+{% endif %}
