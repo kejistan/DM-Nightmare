@@ -1,0 +1,31 @@
+{% if object_list %}
+<table class="object_list">
+  <tr class="head">
+	<th>pk</th>
+	<th>target</th>
+	<th>attack_roll</th>
+	<th>hit_status</th>
+	<th>attack_vs</th>
+	<th>damage_roll</th>
+	<th>status_change</th>
+	<th>created_at</th>
+  </tr>
+  {% for object in object_list %}
+  <tr>
+	<td><a href="{% url action_detail object.pk %}">{{ object.pk }}</a></td>
+	<td><a href="{% url creature_instance_detail object.target.pk %}">{{ object.target.name }}</a></td>
+	<td>{{ object.attack_roll }}</td>
+	<td>{{ object.hit_status }}</td>
+	<td>{{ object.attack_vs }}</td>
+	<td>{{ object.damage_roll }}</td>
+	<td>{{ object.status_change }}</td>
+	<td>{{ object.created_at }}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% else %}
+<div class="object_list">
+  There are no actions.
+</div>
+{% endif %}
+<p><a href="{% url action_create %}">Add an action</a></p>

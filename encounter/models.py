@@ -4,13 +4,27 @@ def _range(min, max):
     if (min == max):
         return str(max)
     else:
-        return '[%d,%d]' % (min, max)
+        return '[%s,%s]' % (str(min), str(max))
+
+_AC = 0
+_FORT = 1
+_REF = 2
+_WILL = 3
+_NO_CHANGE = 0
+_BLOODIED = 1
+_DEAD = 2
 
 class Encounter(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def actions(self):
+        return Action.objects.filter(target__in=self.creatures.all()).distinct()
     
     def new_creature(self, _class):
         return self.creatures.create(creature_class=_class)
+
+    def __unicode__(self):
+        return unicode(self.created_at)
 
 class CreatureClass(models.Model):
     name = models.CharField(max_length=50)
@@ -46,45 +60,132 @@ class CreatureClass(models.Model):
     def new_instance(self, encounter):
         return encounter.new_creature(self.pk)
 
+    def update_hp(self, new_min, new_max):
+        if self.maximum_hp and new_max:
+            if self.maximum_hp > new_max:
+                self.maximum_hp = new_max
+        elif new_max:
+            self.maximum_hp = new_max
+        if new_min and self.minimum_hp < new_min:
+            self.minimum_hp = new_min
+        self.save()
+
+    def update_def(self, attribute, roll, is_hit):
+        if attribute == _AC:
+            if is_hit:
+                if self.maximum_ac:
+                    self.maximum_ac = min(self.maximum_ac, roll - 1)
+                else:
+                    self.maximum_ac = roll - 1
+            else:
+                self.minimum_ac = max(self.minimum_ac, roll)
+        elif attribute == _FORT:
+            if is_hit:
+                if self.maximum_fort:
+                    self.maximum_fort = min(self.maximum_fort, roll - 1)
+                else:
+                    self.maximum_fort = roll - 1
+            else:
+                self.minimum_fort = max(self.minimum_fort, roll)
+        elif attribute == _REF:
+            if is_hit:
+                if self.maximum_ref:
+                    self.maximum_ref = min(self.maximum_ref, roll - 1)
+                else:
+                    self.maximum_ref = roll - 1
+            else:
+                self.minimum_ref = max(self.minimum_ref, roll)
+        elif attribute == _WILL:
+            if is_hit:
+                if self.maximum_will:
+                    self.maximum_will = min(self.maximum_will, roll - 1)
+                else:
+                    self.maximum_will = roll - 1
+            else:
+                self.minimum_will = max(self.minimum_will, roll)
+        self.save()
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'creature class'
+        verbose_name_plural = verbose_name + 'es'
+
 class CreatureInstance(models.Model):
     creature_class = models.ForeignKey(CreatureClass, related_name='instances')
     encounter = models.ForeignKey(Encounter, related_name='creatures')
-    encounter_label = models.CharField(max_length=50, blank=True)
+    encounter_label = models.CharField(max_length=50, default='unspecified')
     created_at = models.DateTimeField(auto_now_add=True)
     
     def new_action(self, action):
         return self.actions.create(action)
 
     def name(self):
-        if self.encounter_label:
-            return '%s - %s' % (self.encounter_label, self.creature_class.name)
-        else:
-            return self.creature_class.name
+        return '%s - %s' % (self.encounter_label, self.creature_class.name)
 
-    def clean_encounter_label(self):
-        label = self.cleaned_data['encounter_label']
-        try:
-            if (self.encounter.creatures.get(encounter_label=label).pk != self.pk):
-                return label
-            else:
-                raise forms.ValidationError('label already exists in encounter %d' % self.encounter.pk)
-        except ObjectDoesNotExist:
-            return label
+    def damage_taken(self):
+        return self.actions.filter(is_hit=True).aggregate(
+            models.Sum('damage_roll'))['damage_roll__sum']
+
+    def update_attributes(self):
+        most_recent_action = self.actions.latest('created_at')
+        if most_recent_action.is_hit:
+            total_damage_taken = self.damage_taken()
+            if most_recent_action.status_change == _BLOODIED:
+                min_hp = total_damage_taken + 1
+                max_hp = total_damage_taken * 2
+                self.creature_class.update_hp(min_hp, max_hp)
+            elif most_recent_action.status_change == _DEAD:
+                min_hp = None
+                max_hp = total_damage_taken
+                self.creature_class.update_hp(min_hp, max_hp)
+            elif most_recent_action.status_change == _NO_CHANGE:
+                if self.actions.filter(status_change=_BLOODIED).exists():
+                    min_hp = total_damage_taken + 1
+                    max_hp = None
+                    self.creature_class.update_hp(min_hp, max_hp)
+                else:
+                    min_hp = total_damage_taken * 2 + 1
+                    max_hp = None
+                    self.creature_class.update_hp(min_hp, max_hp)
+        self.creature_class.update_def(most_recent_action.attack_vs,
+                                       most_recent_action.attack_roll,
+                                       most_recent_action.is_hit)
+
+    def __unicode__(self):
+        return self.name()
+
+    class Meta:
+        unique_together = ('encounter', 'encounter_label', 'creature_class')
+        order_with_respect_to = 'encounter'
+        ordering = ['-created_at', 'encounter_label']
 
 class Action(models.Model):
     target = models.ForeignKey(CreatureInstance, related_name='actions')
     attack_roll = models.IntegerField()
-    hit_status = models.BooleanField()
+    is_hit = models.BooleanField()
     attack_vs = models.IntegerField(choices=(
-            (0, 'AC'),
-            (1, 'FORT'),
-            (2, 'REF'),
-            (3, 'WILL'))
+            (_AC, 'AC'),
+            (_FORT, 'FORT'),
+            (_REF, 'REF'),
+            (_WILL, 'WILL'))
     )
-    damage_roll = models.IntegerField()
+    damage_roll = models.IntegerField(blank=True, null=True)
     status_change = models.IntegerField(choices=(
-            (0, 'no change'),
-            (1, 'became bloodied'),
-            (2, 'became dead'))
+            (_NO_CHANGE, 'no change'),
+            (_BLOODIED, 'became bloodied'),
+            (_DEAD, 'became dead')),
+        blank=True, null=True
     )
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def encounter(self):
+        return self.target.encounter
+
+    def save(self):
+        super(Action, self).save()
+        self.target.update_attributes()
+
+    def __unicode__(self):
+        return '%s - %s' % (self.target, unicode(self.created_at))

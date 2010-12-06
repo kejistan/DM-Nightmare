@@ -1,0 +1,55 @@
+[
+	{
+		"model" : "encounter.encounter",
+		"pk" : 1,
+		"fields" : {
+			"created_at" : "2010-12-05 17:20:21"
+		}
+	},
+	{
+		"model" : "encounter.creatureclass",
+		"pk" : 1,
+		"fields" : {
+			"name" : "Test Class",
+			"created_at" : "2010-12-05 17:25:00",
+			"updated_at" : "2010-12-05 17:25:00",
+			"minimum_hp" : 17,
+			"minimum_ac" : 15,
+			"maximum_will" : 17
+		}
+	},
+	{
+		"model" : "encounter.creatureinstance",
+		"pk" : 1,
+		"fields" : {
+			"creature_class" : 1,
+			"encounter" : 1,
+			"encounter_label" : "unspecified",
+			"created_at" : "2010-12-05 17:30:00"
+		}
+	},
+	{
+		"model" : "encounter.action",
+		"pk" : 1,
+		"fields" : {
+			"target" : 1,
+			"attack_roll" : 15,
+			"is_hit" : false,
+			"attack_vs" : "0",
+			"created_at" : "2010-12-05 17:35:00"
+		}
+	},
+	{
+		"model" : "encounter.action",
+		"pk" : 2,
+		"fields" : {
+			"target" : 1,
+			"attack_roll" : 18,
+			"is_hit" : true,
+			"attack_vs" : 2,
+			"damage_roll" : 8,
+			"status_change" : 0,
+			"created_at" : "2010-12-05 17:40:00"
+		}
+	}
+]

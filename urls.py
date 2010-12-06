@@ -1,6 +1,6 @@
 from django.conf.urls.defaults import *
 from django.contrib import admin
-from django.views.generic import list_detail
+from django.views.generic import list_detail, create_update
 from encounter.models import Encounter, CreatureClass, CreatureInstance, Action
 
 admin.autodiscover()
@@ -22,6 +22,8 @@ urlpatterns = patterns('',
 
     (r'^actions/(?P<object_id>\d+)', list_detail.object_detail, actions,
      'action_detail'),
+    (r'^actions/add', 'encounter.views.action_create', {},
+     'action_create'),
     (r'^actions', list_detail.object_list, actions, 'action_list'),
 
     (r'^encounters/(?P<object_id>\d+)/creatures',

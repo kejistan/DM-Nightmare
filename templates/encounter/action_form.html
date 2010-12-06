@@ -1,0 +1,36 @@
+{% extends 'main.html' %}
+
+{% block title %}Add Action{% endblock %}
+
+{% block body %}
+<form action="" method="post">
+  <table>
+	<tr>
+	  <td>{{ form.target.label_tag }}</td>
+	  <td>{{ form.target }}</td>
+	</tr>
+	<tr>
+	  <td>{{ form.attack_roll.label_tag }}</td>
+	  <td>{{ form.attack_roll }}</td>
+	</tr>
+	<tr>
+	  <td>{{ form.is_hit.label_tag }}</td>
+	  <td>{{ form.is_hit }}</td>
+	</tr>
+	<tr>
+	  <td>{{ form.attack_vs.label_tag }}</td>
+	  <td>{{ form.attack_vs }}</td>
+	</tr>
+	<tr>
+	  <td>{{ form.damage_roll.label_tag }}</td>
+	  <td>{{ form.damage_roll }}</td>
+	</tr>
+	<tr>
+	  <td>{{ form.status_change.label_tag }}</td>
+	  <td>{{ form.status_change }}</td>
+	</tr>
+  </table>
+  {% csrf_token %}
+  <input type="submit" value="Create Action">
+</form>
+{% endblock %}

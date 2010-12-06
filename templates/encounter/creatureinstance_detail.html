@@ -1,0 +1,12 @@
+{% extends 'main.html' %}
+
+{% block title %}{{ object.name }}{% endblock %}
+
+{% block body %}
+<h2>Actions against {{ object.name }}</h2>
+{% with object.actions.all as object_list %}
+{% include 'encounter/action_list.html' %}
+{% endwith %}
+
+<p><a href="{% url creature_class_detail object.creature_class.pk %}">All creatures of this type</a></p>
+{% endblock %}

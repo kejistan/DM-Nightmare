@@ -1,0 +1,8 @@
+{% extends 'main.html' %}
+
+{% block title %}Action {{ object.pk }}{% endblock %}
+
+{% block body %}
+<h1>Action {{ object.pk }} on {{ object.created_at }}</h1>
+
+{% endblock %}

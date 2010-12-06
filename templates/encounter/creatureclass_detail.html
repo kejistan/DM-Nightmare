@@ -1,0 +1,15 @@
+{% extends 'main.html' %}
+
+{% block title %}{{ object.name }}{% endblock %}
+
+{% block body %}
+<h2>Instances of {{ object.name }}</h2>
+{% with object.instances.all as object_list %}
+{% include 'encounter/creatureinstance_table.html' %}
+{% endwith %}
+
+<h2>Encounters with {{ object.name }}</h2>
+{% with object.encounters.all as object_list %}
+{% include 'encounter/encounter_table.html' %}
+{% endwith %}
+{% endblock %}

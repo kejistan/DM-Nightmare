@@ -2,7 +2,6 @@
 <table class="object_list">
   <tr class="head">
 	<th>pk</th>
-	<th>encounter_label</th>
 	<th>name</th>
 	<th>hp</th>
 	<th>ac</th>
@@ -14,8 +13,7 @@
   {% for object in object_list %}
   <tr>
 	<td><a href="{% url creature_instance_detail object.pk %}">{{ object.pk }}</a></td>
-	<td>{{ object.encounter_label }}</td>
-	<td>{{ object.creature_class.name }}</td>
+	<td>{{ object.name }}</td>
 	<td>{{ object.creature_class.hp }}</td>
 	<td>{{ object.creature_class.ac }}</td>
 	<td>{{ object.creature_class.fort }}</td>
