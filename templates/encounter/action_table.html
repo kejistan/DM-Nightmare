@@ -28,4 +28,6 @@
   There are no actions.
 </div>
 {% endif %}
-<p><a href="{% url action_create %}">Add an action</a></p>
+{% if encounter_id %}
+<p><a href="{% url encounter_action_create encounter_id %}">Add an action</a></p>
+{% endif %}

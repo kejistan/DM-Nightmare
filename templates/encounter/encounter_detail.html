@@ -11,7 +11,8 @@
 {% endwith %}
 
 <h2>Actions Taken</h2>
+{% with object.pk as encounter_id %}
 {% with object.actions.all as object_list %}
 {% include 'encounter/action_table.html' %}
-{% endwith %}
+{% endwith %}{% endwith %}
 {% endblock %}

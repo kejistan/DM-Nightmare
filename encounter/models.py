@@ -26,6 +26,11 @@ class Encounter(models.Model):
     def __unicode__(self):
         return unicode(self.created_at)
 
+    @models.permalink
+    def get_absolute_url(self):
+        return ('encounter_detail', (),
+                { 'object_id' : self.pk })
+
 class CreatureClass(models.Model):
     name = models.CharField(max_length=50)
     minimum_hp = models.IntegerField(blank=True, null=True)

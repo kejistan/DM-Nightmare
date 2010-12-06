@@ -7,11 +7,13 @@ def encounter_creature_list(request, object_id):
     creatures = get_object_or_404(Encounter, pk=object_id).creatures.all()
     return list_detail.object_list(request, queryset=creatures)
 
-def encounter_action_list(request, object_id):
-    actions = get_object_or_404(Encounter, pk=object_id).actions.all()
-    return list_detail.object_list(request, queryset=actions)
+def encounter_action_list(request, encounter_id):
+    actions = get_object_or_404(Encounter, pk=encounter_id).actions.all()
+    extra = { 'encounter_id' : encounter_id }
+    return list_detail.object_list(request, queryset=actions,
+                                   extra_context=extra)
 
-def action_create(request, encounter_id, *args, **kwargs):
+def encounter_action_create(request, encounter_id, *args, **kwargs):
     encounter = get_object_or_404(Encounter, pk=encounter_id)
     redirect_to = encounter.get_absolute_url()
     return create_update.create_object(request,
