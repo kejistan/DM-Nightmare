@@ -128,6 +128,17 @@ class CreatureInstance(models.Model):
         return self.actions.filter(is_hit=True).aggregate(
             models.Sum('damage_roll'))['damage_roll__sum']
 
+    def is_dead(self):
+        return self.actions.filter(status_change=_DEAD).exists()
+
+    def current_health(self):
+        current_damage = self.damage_taken()
+        if self.is_dead():
+            return 'Dead'
+        else:
+            return _range(self.creature_class.minimum_hp - current_damage,
+                          self.creature_class.maximum_hp - current_damage)
+
     def update_attributes(self):
         most_recent_action = self.actions.latest('created_at')
         if most_recent_action.is_hit:

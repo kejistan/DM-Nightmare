@@ -3,7 +3,8 @@
   <tr class="head">
 	<th>pk</th>
 	<th>name</th>
-	<th>hp</th>
+	<th>current hp</th>
+	<th>total hp</th>
 	<th>ac</th>
 	<th>fort</th>
 	<th>ref</th>
@@ -14,6 +15,7 @@
   <tr>
 	<td><a href="{% url creature_instance_detail object.pk %}">{{ object.pk }}</a></td>
 	<td>{{ object.name }}</td>
+	<td>{{ object.current_health }}</td>
 	<td>{{ object.creature_class.hp }}</td>
 	<td>{{ object.creature_class.ac }}</td>
 	<td>{{ object.creature_class.fort }}</td>
