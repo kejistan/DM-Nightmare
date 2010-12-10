@@ -15,7 +15,7 @@ _BLOODIED = 1
 _DEAD = 2
 
 class Encounter(models.Model):
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True, editable=False)
 
     def actions(self):
         return Action.objects.filter(target__in=self.creatures.all()).distinct()
@@ -33,19 +33,19 @@ class Encounter(models.Model):
 
 class CreatureClass(models.Model):
     name = models.CharField(max_length=50)
-    minimum_hp = models.IntegerField(blank=True, null=True)
-    maximum_hp = models.IntegerField(blank=True, null=True)
-    minimum_ac = models.IntegerField(blank=True, null=True)
-    maximum_ac = models.IntegerField(blank=True, null=True)
-    minimum_fort = models.IntegerField(blank=True, null=True)
-    maximum_fort = models.IntegerField(blank=True, null=True)
-    minimum_ref = models.IntegerField(blank=True, null=True)
-    maximum_ref = models.IntegerField(blank=True, null=True)
-    minimum_will = models.IntegerField(blank=True, null=True)
-    maximum_will = models.IntegerField(blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    encounters = models.ManyToManyField(Encounter, through='CreatureInstance', related_name='creature_classes')
+    minimum_hp = models.IntegerField(blank=True, null=True, editable=False)
+    maximum_hp = models.IntegerField(blank=True, null=True, editable=False)
+    minimum_ac = models.IntegerField(blank=True, null=True, editable=False)
+    maximum_ac = models.IntegerField(blank=True, null=True, editable=False)
+    minimum_fort = models.IntegerField(blank=True, null=True, editable=False)
+    maximum_fort = models.IntegerField(blank=True, null=True, editable=False)
+    minimum_ref = models.IntegerField(blank=True, null=True, editable=False)
+    maximum_ref = models.IntegerField(blank=True, null=True, editable=False)
+    minimum_will = models.IntegerField(blank=True, null=True, editable=False)
+    maximum_will = models.IntegerField(blank=True, null=True, editable=False)
+    created_at = models.DateTimeField(auto_now_add=True, editable=False)
+    updated_at = models.DateTimeField(auto_now=True, editable=False)
+    encounters = models.ManyToManyField(Encounter, through='CreatureInstance', related_name='creature_classes', editable=False)
 
     def hp(self):
         return _range(self.minimum_hp, self.maximum_hp)
@@ -121,7 +121,7 @@ class CreatureInstance(models.Model):
     creature_class = models.ForeignKey(CreatureClass, related_name='instances')
     encounter = models.ForeignKey(Encounter, related_name='creatures')
     encounter_label = models.CharField(max_length=50, default='unspecified')
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True, editable=False)
     
     def new_action(self, action):
         return self.actions.create(action)
@@ -141,8 +141,20 @@ class CreatureInstance(models.Model):
         if self.is_dead():
             return 'Dead'
         else:
-            return _range(self.creature_class.minimum_hp - current_damage,
-                          self.creature_class.maximum_hp - current_damage)
+            if (self.creature_class.minimum_hp and 
+                self.creature_class.maximum_hp):
+                return _range(self.creature_class.minimum_hp
+                              - current_damage,
+                              self.creature_class.maximum_hp
+                              - current_damage)
+            elif self.creature_class.minimum_hp:
+                return _range(self.creature_class.minimum_hp
+                              - current_damage, None)
+            elif self.creature_class.maximum_hp:
+                return _range(None, self.creature_class.maximum_hp
+                              - current_damage)
+            else:
+                return _range(None, None)
 
     def update_attributes(self):
         most_recent_action = self.actions.latest('created_at')
@@ -197,9 +209,9 @@ class Action(models.Model):
             (_NO_CHANGE, 'no change'),
             (_BLOODIED, 'became bloodied'),
             (_DEAD, 'became dead')),
-        blank=True, null=True
+        blank=True, null=True, default=_NO_CHANGE
     )
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True, editable=False)
 
     def encounter(self):
         return self.target.encounter

@@ -5,6 +5,7 @@
 {% block body %}
 <form action="" method="post">
   {{ form.as_table }}
-  <input type="submit" value="Create Action">{% csrf_token %}
+  {% csrf_token %}
+  <input type="submit" value="Create Creature Class">
 </form>
 {% endblock %}

@@ -31,3 +31,6 @@
   There are no Creature Instances.
 </div>
 {% endif %}
+{% if encounter_id %}
+<p><a href="{% url encounter_creature_create encounter_id %}">Add Creature Instance</a></p>
+{% endif %}

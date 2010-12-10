@@ -3,7 +3,8 @@
 {% block title %}Encounter {{ object.pk }}{% endblock %}
 
 {% block body %}
-<h1>Encounter {{ object.pk }} on {{ object.created_at }}</h1>
+{% with object.pk as encounter_id %}
+<h1>Encounter {{ encounter_id }} on {{ object.created_at }}</h1>
 
 <h2>Creatures Involved</h2>
 {% with object.creatures.all as object_list %}
@@ -11,8 +12,8 @@
 {% endwith %}
 
 <h2>Actions Taken</h2>
-{% with object.pk as encounter_id %}
 {% with object.actions.all as object_list %}
 {% include 'encounter/action_table.html' %}
-{% endwith %}{% endwith %}
+{% endwith %}
+{% endwith %}
 {% endblock %}

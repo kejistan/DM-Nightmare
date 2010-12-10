@@ -13,8 +13,8 @@
   </tr>
   {% for object in object_list %}
   <tr>
-	<td>{{ object.pk }}</td>
-	<td>{{ object.name }}</td>
+	<td><a href="{% url creature_class_detail object.pk %}">{{ object.pk }}</a></td>
+	<td><a href="{% url creature_class_detail object.pk %}">{{ object.name }}</a></td>
 	<td>{{ object.hp }}</td>
 	<td>{{ object.ac }}</td>
 	<td>{{ object.fort }}</td>

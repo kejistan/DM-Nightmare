@@ -4,7 +4,7 @@
 	<th>pk</th>
 	<th>target</th>
 	<th>attack_roll</th>
-	<th>hit_status</th>
+	<th>is_hit</th>
 	<th>attack_vs</th>
 	<th>damage_roll</th>
 	<th>status_change</th>
@@ -15,7 +15,7 @@
 	<td><a href="{% url action_detail object.pk %}">{{ object.pk }}</a></td>
 	<td><a href="{% url creature_instance_detail object.target.pk %}">{{ object.target.name }}</a></td>
 	<td>{{ object.attack_roll }}</td>
-	<td>{{ object.hit_status }}</td>
+	<td>{{ object.is_hit }}</td>
 	<td>{{ object.attack_vs }}</td>
 	<td>{{ object.damage_roll }}</td>
 	<td>{{ object.status_change }}</td>
