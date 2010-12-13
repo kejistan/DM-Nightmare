@@ -5,18 +5,7 @@
 {% block body %}
 <form action="" method="post">
   <table>
-	<tr>
-	  <td>{{ form.creature_class.label_tag }}</td>
-	  <td>{{ form.creature_class }}</td>
-	</tr>
-	<tr>
-	  <td>{{ form.encounter.label_tag }}</td>
-	  <td>{{ form.encounter }}</td>
-	</tr>
-	<tr>
-	  <td>{{ form.encounter_label.label_tag }}</td>
-	  <td>{{ form.encounter_label }}</td>
-	</tr>
+	{{ form.as_table }}
   </table>
   {% csrf_token %}
   <input type="submit" value="Create Action">

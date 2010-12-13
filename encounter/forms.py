@@ -9,6 +9,10 @@ class CreatureInstanceForm_Classless(CreatureInstanceForm):
     class Meta(CreatureInstanceForm.Meta):
         exclude = ('creature_class',)
 
+class CreatureInstanceForm_Encounterless(CreatureInstanceForm):
+    class Meta(CreatureInstanceForm.Meta):
+        exclude = ('encounter',)
+
 class ActionForm(ModelForm):
     class Meta:
         model = Action
